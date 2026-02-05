@@ -68,5 +68,7 @@ class NetOpsAgent:
             runbook_id="",
             actions=actions,
             validation_passed=True,
+            validation_reason="Validation pending",
+            escalated=False,
             notes="Actions executed successfully",
         )

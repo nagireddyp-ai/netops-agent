@@ -28,6 +28,8 @@ class Incident(BaseModel):
     category: str
     severity: str
     gateway: str
+    should_fail: bool = False
+    failure_reason: str = ""
 
 
 class Runbook(BaseModel):
@@ -44,4 +46,6 @@ class ExecutionResult(BaseModel):
     runbook_id: str
     actions: List[str]
     validation_passed: bool
+    validation_reason: str
+    escalated: bool
     notes: str

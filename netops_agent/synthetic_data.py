@@ -56,6 +56,8 @@ def make_incidents(seed: int, interfaces: List[Interface]) -> List[Incident]:
         else:
             summary = "CPU utilization high"
             category = "system"
+        should_fail = idx == 0
+        failure_reason = "Device not responding to automated remediation" if should_fail else ""
         incidents.append(
             Incident(
                 incident_id=f"inc-{idx+1:04d}",
@@ -65,6 +67,8 @@ def make_incidents(seed: int, interfaces: List[Interface]) -> List[Incident]:
                 category=category,
                 severity=rng.choice(SEVERITIES),
                 gateway="10.0.0.1",
+                should_fail=should_fail,
+                failure_reason=failure_reason,
             )
         )
     return incidents

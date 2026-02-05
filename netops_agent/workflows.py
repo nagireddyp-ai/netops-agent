@@ -80,8 +80,40 @@ class NetOpsWorkflow:
         plan = self.agent.plan(incident, runbook)
         result = self.agent.execute(incident, plan, logger=self.logger.info)
         result.runbook_id = runbook.runbook_id
+<<<<<<< codex/design-end-to-end-agentic-solution-architecture-ejerf8
+        result.validation_passed = not incident.should_fail
+        result.validation_reason = (
+            "Synthetic validation failed"
+            if incident.should_fail
+            else "Synthetic validation passed"
+        )
+        result.escalated = (not result.validation_passed) or incident.severity == "high"
+        result.notes = f"Matched runbook {runbook.title} (score {score:.2f})."
+        self.logger.info(
+            "[VALIDATION] %s %s (%s)",
+            result.incident_id,
+            "PASS" if result.validation_passed else "FAIL",
+            result.validation_reason,
+        )
+        if result.escalated:
+            self.logger.info(
+                "[ESCALATION] %s escalated to human. reason=%s severity=%s",
+                result.incident_id,
+                incident.failure_reason or "Policy escalation",
+                incident.severity,
+            )
+        self.db.write_ticket(
+            result.incident_id,
+            result.runbook_id,
+            result.notes,
+            result.validation_passed,
+            result.validation_reason,
+            result.escalated,
+        )
+=======
         result.notes = f"Matched runbook {runbook.title} (score {score:.2f})."
         self.db.write_ticket(result.incident_id, result.runbook_id, result.notes, result.validation_passed)
+>>>>>>> main
         self.logger.info(
             "[RESULT] %s validation=%s runbook=%s",
             result.incident_id,
@@ -101,12 +133,20 @@ class NetOpsWorkflow:
         table.add_column("Incident")
         table.add_column("Runbook")
         table.add_column("Validation")
+<<<<<<< codex/design-end-to-end-agentic-solution-architecture-ejerf8
+        table.add_column("Escalation")
+=======
+>>>>>>> main
         table.add_column("Notes")
         for result in results:
             table.add_row(
                 result.incident_id,
                 result.runbook_id,
                 "PASS" if result.validation_passed else "FAIL",
+<<<<<<< codex/design-end-to-end-agentic-solution-architecture-ejerf8
+                "YES" if result.escalated else "NO",
+=======
+>>>>>>> main
                 result.notes,
             )
         self.console.print(table)

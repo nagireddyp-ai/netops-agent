@@ -46,7 +46,13 @@ class NetOpsDatabase:
                 summary VARCHAR,
                 category VARCHAR,
                 severity VARCHAR,
+<<<<<<< codex/design-end-to-end-agentic-solution-architecture-ejerf8
+                gateway VARCHAR,
+                should_fail BOOLEAN,
+                failure_reason VARCHAR
+=======
                 gateway VARCHAR
+>>>>>>> main
             );
             """
         )
@@ -56,7 +62,13 @@ class NetOpsDatabase:
                 incident_id VARCHAR,
                 runbook_id VARCHAR,
                 notes VARCHAR,
+<<<<<<< codex/design-end-to-end-agentic-solution-architecture-ejerf8
+                validation_passed BOOLEAN,
+                validation_reason VARCHAR,
+                escalated BOOLEAN
+=======
                 validation_passed BOOLEAN
+>>>>>>> main
             );
             """
         )
@@ -79,10 +91,25 @@ class NetOpsDatabase:
         self.conn.register("incidents_df", df)
         self.conn.execute("INSERT INTO incidents SELECT * FROM incidents_df")
 
+<<<<<<< codex/design-end-to-end-agentic-solution-architecture-ejerf8
+    def write_ticket(
+        self,
+        incident_id: str,
+        runbook_id: str,
+        notes: str,
+        passed: bool,
+        reason: str,
+        escalated: bool,
+    ) -> None:
+        self.conn.execute(
+            "INSERT INTO tickets VALUES (?, ?, ?, ?, ?, ?)",
+            [incident_id, runbook_id, notes, passed, reason, escalated],
+=======
     def write_ticket(self, incident_id: str, runbook_id: str, notes: str, passed: bool) -> None:
         self.conn.execute(
             "INSERT INTO tickets VALUES (?, ?, ?, ?)",
             [incident_id, runbook_id, notes, passed],
+>>>>>>> main
         )
 
     def show_tables(self) -> dict[str, pd.DataFrame]:
