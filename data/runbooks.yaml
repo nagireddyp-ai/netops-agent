@@ -1,0 +1,41 @@
+runbooks:
+  - id: rb-001
+    title: Interface Down / No Link
+    category: interfaces
+    steps:
+      - "Check interface status and error counters"
+      - "Verify admin state and speed/duplex"
+      - "Check cabling or virtual link"
+      - "Reset interface if flapping"
+    commands:
+      - "show interface {interface}"
+      - "show interface {interface} counters"
+      - "configure terminal ; interface {interface} ; shutdown ; no shutdown"
+    validation:
+      - "interface_status == 'up'"
+
+  - id: rb-002
+    title: High Packet Loss
+    category: connectivity
+    steps:
+      - "Ping gateway to validate reachability"
+      - "Check interface errors"
+      - "Inspect queue drops"
+    commands:
+      - "ping {gateway} count 5"
+      - "show interface {interface} counters"
+    validation:
+      - "packet_loss < 5"
+
+  - id: rb-003
+    title: High CPU on Device
+    category: system
+    steps:
+      - "Check top CPU processes"
+      - "Validate recent config changes"
+      - "Clear stale processes if safe"
+    commands:
+      - "show process cpu"
+      - "show running-config | include last-change"
+    validation:
+      - "cpu_utilization < 70"
