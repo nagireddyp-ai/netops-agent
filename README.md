@@ -71,9 +71,12 @@ The workflow writes detailed logs to `outputs/netops.log` by default. For real-t
 netops-agent run --verbose
 ```
 
+<<<<<<< codex/design-end-to-end-agentic-solution-architecture-ejerf8
 ### Failure scenarios and escalation
 The synthetic generator marks at least one incident as a **forced failure** to demonstrate escalation. When validation fails or severity is `high`, the workflow logs an escalation event and records it in the tickets table.
 
+=======
+>>>>>>> main
 ## Where to start
 - **Architecture**: `docs/architecture.md`
 - **Runbooks**: `data/runbooks.yaml`
