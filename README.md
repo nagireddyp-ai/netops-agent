@@ -64,6 +64,13 @@ netops-agent run
 - `netops-agent run` – generate synthetic data, build index, solve incidents
 - `netops-agent show-db` – inspect DuckDB tables
 
+### Viewing execution logs
+The workflow writes detailed logs to `outputs/netops.log` by default. For real-time logs on the console, add `--verbose`.
+
+```bash
+netops-agent run --verbose
+```
+
 ## Where to start
 - **Architecture**: `docs/architecture.md`
 - **Runbooks**: `data/runbooks.yaml`

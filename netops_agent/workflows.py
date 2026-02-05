@@ -27,6 +27,26 @@ class NetOpsWorkflow:
         self.db = NetOpsDatabase(context.db_path)
         self.index = RunbookIndex(context.db_path)
         self.agent = NetOpsAgent()
+        self.logger = self._setup_logger()
+
+    def _setup_logger(self) -> logging.Logger:
+        logger = logging.getLogger("netops-agent")
+        logger.setLevel(logging.INFO)
+        logger.handlers.clear()
+        formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
+
+        log_path = Path(self.context.log_path)
+        log_path.parent.mkdir(parents=True, exist_ok=True)
+        file_handler = logging.FileHandler(log_path)
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
+
+        if self.context.verbose:
+            console_handler = logging.StreamHandler()
+            console_handler.setFormatter(formatter)
+            logger.addHandler(console_handler)
+
+        return logger
 
     def prepare_data(self) -> List[Incident]:
         devices = make_devices(self.context.seed)
@@ -45,11 +65,25 @@ class NetOpsWorkflow:
 
     def run_incident(self, incident: Incident) -> ExecutionResult:
         runbook, score = self.index.query(incident.summary, top_k=1)[0]
+        self.logger.info(
+            "[PLAN] %s matched runbook %s (score %.2f)",
+            incident.incident_id,
+            runbook.runbook_id,
+            score,
+        )
+        for step in runbook.steps:
+            self.logger.info("[STEP] %s %s", incident.incident_id, step)
         plan = self.agent.plan(incident, runbook)
-        result = self.agent.execute(incident, plan)
+        result = self.agent.execute(incident, plan, logger=self.logger.info)
         result.runbook_id = runbook.runbook_id
         result.notes = f"Matched runbook {runbook.title} (score {score:.2f})."
         self.db.write_ticket(result.incident_id, result.runbook_id, result.notes, result.validation_passed)
+        self.logger.info(
+            "[RESULT] %s validation=%s runbook=%s",
+            result.incident_id,
+            "PASS" if result.validation_passed else "FAIL",
+            result.runbook_id,
+        )
         return result
 
     def run(self) -> None:
