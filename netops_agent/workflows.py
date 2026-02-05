@@ -18,6 +18,8 @@ from .synthetic_data import make_devices, make_incidents, make_interfaces
 class RunContext:
     seed: int
     db_path: str = "outputs/netops.duckdb"
+    log_path: str = "outputs/netops.log"
+    verbose: bool = False
 
 
 class NetOpsWorkflow:
@@ -29,7 +31,9 @@ class NetOpsWorkflow:
         self.agent = NetOpsAgent()
         self.logger = self._setup_logger()
 
-    def _setup_logger(self) -> logging.Logger:
+    def _setup_logger(self) -> "logging.Logger":
+        import logging
+
         logger = logging.getLogger("netops-agent")
         logger.setLevel(logging.INFO)
         logger.handlers.clear()

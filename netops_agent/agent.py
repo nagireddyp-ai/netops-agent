@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Callable
 from typing import List
 
 from .models import ExecutionResult, Incident, Runbook
@@ -37,7 +38,13 @@ class NetOpsAgent:
                 plan.append(PlanStep(description="Check CPU", tool="show_process_cpu"))
         return plan
 
-    def execute(self, incident: Incident, plan: List[PlanStep]) -> ExecutionResult:
+    def execute(
+        self,
+        incident: Incident,
+        plan: List[PlanStep],
+        *,
+        logger: Callable[[str], None] | None = None,
+    ) -> ExecutionResult:
         actions = []
         for step in plan:
             if step.tool == "show_interface":
@@ -52,7 +59,10 @@ class NetOpsAgent:
                 result = show_process_cpu()
             else:
                 continue
-            actions.append(f"{result.command} -> {result.output}")
+            action_line = f"{result.command} -> {result.output}"
+            actions.append(action_line)
+            if logger:
+                logger(f"[ACTION] {incident.incident_id} {action_line}")
         return ExecutionResult(
             incident_id=incident.incident_id,
             runbook_id="",
