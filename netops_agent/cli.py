@@ -15,12 +15,6 @@ def build_parser() -> argparse.ArgumentParser:
     run_parser = subparsers.add_parser("run", help="Run the end-to-end workflow")
     run_parser.add_argument("--seed", type=int, default=42)
     run_parser.add_argument("--db-path", default="outputs/netops.duckdb")
-    run_parser.add_argument("--log-path", default="outputs/netops.log")
-    run_parser.add_argument(
-        "--verbose",
-        action="store_true",
-        help="Print execution logs to the console in addition to writing the log file.",
-    )
 
     show_parser = subparsers.add_parser("show-db", help="Show DuckDB tables")
     show_parser.add_argument("--db-path", default="outputs/netops.duckdb")
@@ -34,14 +28,7 @@ def main() -> None:
     console = Console()
 
     if args.command == "run":
-        workflow = NetOpsWorkflow(
-            RunContext(
-                seed=args.seed,
-                db_path=args.db_path,
-                log_path=args.log_path,
-                verbose=args.verbose,
-            )
-        )
+        workflow = NetOpsWorkflow(RunContext(seed=args.seed, db_path=args.db_path))
         workflow.run()
     elif args.command == "show-db":
         db = NetOpsDatabase(args.db_path)

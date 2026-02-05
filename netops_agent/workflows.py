@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-import logging
 from pathlib import Path
 from typing import List
 
@@ -19,8 +18,6 @@ from .synthetic_data import make_devices, make_incidents, make_interfaces
 class RunContext:
     seed: int
     db_path: str = "outputs/netops.duckdb"
-    log_path: str = "outputs/netops.log"
-    verbose: bool = False
 
 
 class NetOpsWorkflow:
